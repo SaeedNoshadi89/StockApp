@@ -2,10 +2,13 @@ package com.sn.stockapp.data.repository
 
 import com.sn.stockapp.data.csv.CSVParser
 import com.sn.stockapp.data.local.StockDatabase
+import com.sn.stockapp.data.mapper.toCompanyInfoModel
 import com.sn.stockapp.data.mapper.toCompanyListingEntity
 import com.sn.stockapp.data.mapper.toCompanyListingModel
-import com.sn.stockapp.data.remote.dto.StockApi
+import com.sn.stockapp.data.remote.StockApi
+import com.sn.stockapp.domain.model.CompanyInfoModel
 import com.sn.stockapp.domain.model.CompanyListingModel
+import com.sn.stockapp.domain.model.IntradayInfoModel
 import com.sn.stockapp.domain.repository.StockRepository
 import com.sn.stockapp.util.Result
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +22,8 @@ import javax.inject.Singleton
 class StockRepositoryImpl @Inject constructor(
     private val stockApi: StockApi,
     private val stockDatabase: StockDatabase,
-    private val companyListingParser: CSVParser<CompanyListingModel>
+    private val companyListingParser: CSVParser<CompanyListingModel>,
+    private val intradayInfoParser: CSVParser<IntradayInfoModel>,
 ) : StockRepository {
     private val dao = stockDatabase.stockDao
     override suspend fun companyListing(
@@ -60,6 +64,33 @@ class StockRepositoryImpl @Inject constructor(
                 )
                 emit(Result.Loading(false))
             }
+        }
+    }
+
+    override suspend fun getCompanyInfo(symbol: String): Result<CompanyInfoModel> {
+        return try {
+            val result = stockApi.gitCompanyInfo(symbol)
+            Result.Success(result.toCompanyInfoModel())
+        }catch (e: IOException){
+            e.printStackTrace()
+            Result.Error(e)
+        }catch (e: HttpException){
+            e.printStackTrace()
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun getIntradayInfo(symbol: String): Result<List<IntradayInfoModel>> {
+        return try {
+            val response = stockApi.getIntradayInfo(symbol)
+            val parse = intradayInfoParser.parser(response.byteStream())
+            Result.Success(parse)
+        }catch (e: IOException){
+            e.printStackTrace()
+            Result.Error(e)
+        }catch (e: HttpException){
+            e.printStackTrace()
+            Result.Error(e)
         }
     }
 }

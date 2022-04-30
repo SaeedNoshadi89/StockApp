@@ -3,7 +3,7 @@ package com.sn.stockapp.di
 import android.app.Application
 import androidx.room.Room
 import com.sn.stockapp.data.local.StockDatabase
-import com.sn.stockapp.data.remote.dto.StockApi
+import com.sn.stockapp.data.remote.StockApi
 import com.sn.stockapp.util.BASE_URL
 import com.sn.stockapp.util.DB_NAME
 import dagger.Module
