@@ -1,6 +1,8 @@
 package com.sn.stockapp.data.mapper
 
 import com.sn.stockapp.data.local.entity.CompanyListingEntity
+import com.sn.stockapp.data.remote.dto.CompanyInfoDto
+import com.sn.stockapp.domain.model.CompanyInfoModel
 import com.sn.stockapp.domain.model.CompanyListingModel
 
 fun CompanyListingEntity.toCompanyListingModel(): CompanyListingModel {
@@ -20,5 +22,15 @@ fun CompanyListingModel.toCompanyListingEntity(): CompanyListingEntity {
         exchange = exchange,
         assetType = assetType,
         status = status
+    )
+}
+
+fun CompanyInfoDto.toCompanyInfoModel(): CompanyInfoModel{
+    return CompanyInfoModel(
+        symbol = symbol ?: "",
+        description = description ?: "",
+        name = name ?: "",
+        country = country ?: "",
+        industry = industry ?: ""
     )
 }
