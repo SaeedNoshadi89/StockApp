@@ -24,7 +24,7 @@ object AppModule {
     fun provideStockApi(): StockApi =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.   create())
             .build()
             .create()
 
